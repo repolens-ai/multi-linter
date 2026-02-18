@@ -1,0 +1,44 @@
+version: 1.0
+fail_on_error: true
+report_format: github  # github | json | junit | markdown
+
+linters:
+  eslint:
+    enabled: true
+    paths: ["src/**/*.ts", "src/**/*.js"]
+    auto_fix: true
+    config_file: ".eslintrc.json"
+    fail_on_warning: false
+  prettier:
+    enabled: true
+    paths: ["src/**/*.ts", "src/**/*.js"]
+    auto_fix: true
+    fail_on_warning: false
+  flake8:
+    enabled: true
+    paths: ["**/*.py"]
+    max_line_length: 120
+    fail_on_warning: false
+  black:
+    enabled: true
+    paths: ["**/*.py"]
+    auto_fix: true
+    fail_on_warning: false
+  mypy:
+    enabled: true
+    paths: ["**/*.py"]
+    fail_on_warning: false
+  golangci-lint:
+    enabled: true
+    paths: ["./..."]
+    config_file: ".golangci.yml"
+    fail_on_warning: false
+  clippy:
+    enabled: true
+    paths: ["."]
+    fail_on_warning: false
+  yamllint:
+    enabled: true
+    paths: ["**/*.yml", "**/*.yaml"]
+    config_file: ".yamllint.yaml"
+    fail_on_warning: false

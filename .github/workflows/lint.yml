@@ -1,0 +1,18 @@
+name: Lint
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Multi-Linter
+        uses: docker://your-org/multi-linter:latest
+        with:
+          config_file: .github/linter-config.yaml

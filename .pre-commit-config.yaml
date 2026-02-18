@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: multi-linter
+        name: Run Multi-Linter
+        entry: docker run --rm -v $(pwd):/app -w /app multi-linter
+        language: system
+        pass_filenames: false
+        always_run: true
