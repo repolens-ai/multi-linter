@@ -131,7 +131,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Multi-Linter
-        uses: docker://your-org/multi-linter:latest
+        uses: docker://repolens-ai/multi-linter:latest
         with:
           config_file: .github/linter-config.yaml
 ```
