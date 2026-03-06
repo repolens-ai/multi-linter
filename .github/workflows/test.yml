@@ -96,7 +96,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run Multi-Linter
-        uses: ./
+        uses: ./action
         with:
           config_file: config/linter-config.yaml
 
@@ -106,7 +106,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Run Multi-Linter (self-check)
-        uses: ./
+        uses: ./action
         with:
           config_file: config/linter-config-self.yaml
 
