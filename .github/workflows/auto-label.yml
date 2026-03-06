@@ -5,7 +5,6 @@ on:
     types: [opened, edited]
   pull_request:
     types: [opened, synchronize]
-  label_workflow:
 
 jobs:
   label-issues:
