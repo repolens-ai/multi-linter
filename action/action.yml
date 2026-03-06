@@ -1,0 +1,26 @@
+name: Multi-Linter
+description: Docker-based multi-language linting tool with 40+ linters
+author: Multi-Linter Team
+branding:
+  icon: check-circle
+  color: green
+inputs:
+  config_file:
+    description: Path to linter configuration file
+    required: false
+    default: config/linter-config.yaml
+  fail_on_error:
+    description: Exit with error code if any linter finds errors
+    required: false
+    default: "true"
+  report_format:
+    description: Output format (github, json, junit, markdown)
+    required: false
+    default: github
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    CONFIG_FILE: ${{ inputs.config_file }}
+    FAIL_ON_ERROR: ${{ inputs.fail_on_error }}
+    REPORT_FORMAT: ${{ inputs.report_format }}

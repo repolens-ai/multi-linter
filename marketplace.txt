@@ -1,0 +1,72 @@
+Multi-Linter is a Docker-based, multi-language linting tool that supports 40+ linters across 20+ languages.
+
+## Supported Languages and Linters
+
+### JavaScript/TypeScript
+- ESLint, Prettier, Stylelint, Markdownlint, TypeScript (tsc), Biome, JSONLint, HTMLHint
+
+### Python
+- Flake8, Black, MyPy, Pylint, isort, Bandit, Ruff
+
+### Go
+- golangci-lint, gofmt, govet
+
+### Rust
+- Clippy, rustfmt
+
+### YAML
+- YAML-Lint
+- GitHub Actions Linter Config (.github/linters/*.yml)
+
+### Shell
+- ShellCheck, shfmt
+
+### Docker
+- Hadolint
+
+### Java
+- Checkstyle
+
+### Kotlin
+- ktlint
+
+### Terraform
+- Terraform validate, TFLint
+
+### Cloud
+- CFN-Lint (CloudFormation), Kubeconform (Kubernetes)
+
+### DevOps
+- Ansible-Lint, Actionlint (GitHub Actions)
+
+### Other Languages
+- Ruby (RuboCop), Lua (Luacheck), LaTeX (ChkTeX), SQL (SQLFluff), XML (xmllint), Protocol Buffers (Protolint)
+
+### Security & Quality
+- Gitleaks (secrets detection)
+- Codespell (spell check)
+- dotenv-linter (.env files)
+
+## Features
+
+- Parallel execution for performance
+- Auto language detection based on file changes
+- GitHub Annotations support
+- Multiple output formats (GitHub, JSON, JUnit, Markdown)
+- Docker-first design for CI/CD
+- DSL-driven YAML configuration
+- Auto-fix support for applicable linters
+
+## Usage
+
+```yaml
+- uses: your-repo/multi-linter@v1
+  with:
+    config_file: config/linter-config.yaml
+    fail_on_error: true
+    report_format: github
+```
+
+## Configuration
+
+Create a `config/linter-config.yaml` file to enable/disable linters and customize paths.

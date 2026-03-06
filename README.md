@@ -1,121 +1,46 @@
-# Multi-Linter — Pro Edition
+# Multi-Linter
 
-A unified, multi-language linter with Pro Features for CI/CD and local development. Supports JS/TS, Python, Go, Rust, YAML, and more, with DSL-driven configuration, parallel execution, GitHub annotations, pre-commit integration, and smart reporting.
+A Docker-based, multi-language linting tool with **40+ linters** across **20+ languages**. Supports GitHub Actions and GitHub Marketplace.
 
-## 🚀 Features
+## Features
 
-### Core Features
-*   **Multi-language support**: JS/TS, Python, Go, Rust, YAML.
-*   **Docker-first architecture**: Works locally and in CI/CD pipelines.
-*   **DSL configuration**: Enable/disable linters, set paths, configure rules in a single YAML file.
-*   **Standardized logging**: Unified format for all linter outputs.
+- **40+ Linters** - Support for JavaScript, TypeScript, Python, Go, Rust, YAML, Shell, Docker, Java, Kotlin, Terraform, and more
+- **Parallel Execution** - Run all enabled linters concurrently
+- **Auto Language Detection** - Only runs linters for relevant changed files
+- **GitHub Annotations** - Errors and warnings appear inline on PR files
+- **Multiple Output Formats** - GitHub, JSON, JUnit, Markdown
+- **Auto-fix Support** - Many linters support automatic fixes
+- **GitHub Actions** - Ready-to-use action published to GitHub Marketplace
+- **Docker-first** - Works locally and in any CI/CD pipeline
 
-### Pro Features
-*   **Parallel Linter Execution** — Run all enabled linters concurrently to reduce CI runtime.
-*   **Auto Language Detection** — Only runs linters for relevant changed files.
-*   **Pro Reporting & GitHub Annotations** — PR annotations, JSON output, and JUnit XML for dashboards.
-*   **Advanced Warning vs Error Handling** — Configurable `fail_on_warning` and smart exit codes.
-*   **Pre-commit Integration** — Run Multi-Linter locally before commits.
-*   **Premium UX Enhancements** — Colorized console output, optimized Dockerfile, and standardized wrapper scripts.
+## Supported Languages & Linters
 
-## 📂 Repository Structure
+| Language | Linters |
+|----------|---------|
+| JavaScript/TypeScript | ESLint, Prettier, Stylelint, Markdownlint, TypeScript, Biome, JSONLint, HTMLHint |
+| Python | Flake8, Black, MyPy, Pylint, isort, Bandit, Ruff |
+| Go | golangci-lint, gofmt, govet |
+| Rust | Clippy, rustfmt |
+| YAML | YAML-Lint, GitHub Actions Linter Config |
+| Shell | ShellCheck, shfmt |
+| Docker | Hadolint |
+| Java | Checkstyle |
+| Kotlin | ktlint |
+| Terraform | Terraform validate, TFLint |
+| Cloud | CFN-Lint, Kubeconform |
+| DevOps | Ansible-Lint, Actionlint |
+| Ruby | RuboCop |
+| Lua | Luacheck |
+| LaTeX | ChkTeX |
+| SQL | SQLFluff |
+| XML | xmllint |
+| Protocol Buffers | Protolint |
+| Security | Gitleaks, Codespell, dotenv-linter |
 
-```
-multi-linter/
-├── .github/
-│   └── workflows/
-│       └── lint.yml               # GitHub Actions workflow
-├── docker/
-│   └── Dockerfile                 # Multi-linter container
-├── linters/                        # Individual wrapper scripts
-│   ├── eslint.sh
-│   ├── prettier.sh
-│   ├── flake8.sh
-│   ├── black.sh
-│   ├── mypy.sh
-│   ├── golangci-lint.sh
-│   ├── clippy.sh
-│   └── yamllint.sh
-├── scripts/
-│   ├── entrypoint.sh              # Orchestrates all linters
-│   └── reporter.sh                # Generates reports and GitHub annotations
-├── config/
-│   └── linter-config.yaml         # DSL configuration
-├── .pre-commit-config.yaml        # Pre-commit integration
-├── README.md
-└── LICENSE
-```
+## Quick Start
 
-## ⚙️ DSL Configuration Example (`config/linter-config.yaml`)
+### GitHub Actions
 
-```yaml
-version: 1.0
-fail_on_error: true
-fail_on_warning: false
-report_format: github  # github | json | junit | markdown
-
-linters:
-  eslint:
-    enabled: true
-    paths: ["src/**/*.ts", "src/**/*.js"]
-    auto_fix: true
-    config_file: ".eslintrc.json"
-    fail_on_warning: false
-
-  prettier:
-    enabled: true
-    paths: ["src/**/*.ts", "src/**/*.js"]
-    auto_fix: true
-
-  flake8:
-    enabled: true
-    paths: ["**/*.py"]
-    max_line_length: 120
-
-  black:
-    enabled: true
-    paths: ["**/*.py"]
-    auto_fix: true
-
-  mypy:
-    enabled: true
-    paths: ["**/*.py"]
-
-  golangci-lint:
-    enabled: true
-    paths: ["./..."]
-    config_file: ".golangci.yml"
-
-  clippy:
-    enabled: true
-    paths: ["."]
-  
-  yamllint:
-    enabled: true
-    paths: ["**/*.yml", "**/*.yaml"]
-    config_file: ".yamllint.yaml"
-```
-
-## 💻 Usage
-
-### 1. Local Usage via Docker
-
-```bash
-# Build the Docker image
-docker build -t multi-linter -f docker/Dockerfile .
-
-# Run against your current project
-docker run -v $(pwd):/app -w /app multi-linter
-```
-
-**Optional**: Use a custom config file:
-```bash
-docker run -v $(pwd):/app -w /app -e CONFIG_FILE=/app/config/linter-config.yaml multi-linter
-```
-
-### 2. GitHub Actions Workflow
-
-`.github/workflows/lint.yml`:
 ```yaml
 name: Lint
 
@@ -129,50 +54,65 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Run Multi-Linter
-        uses: docker://repolens-ai/multi-linter:latest
+      - uses: actions/checkout@v4
+      - uses: repolense-ai/multi-linter@v1
         with:
-          config_file: .github/linter-config.yaml
+          config_file: config/linter-config.yaml
 ```
-*Generates GitHub PR annotations and supports JSON/JUnit reports for CI dashboards.*
 
-### 3. Pre-commit Integration
+### Local Usage via Docker
 
-`.pre-commit-config.yaml`:
+```bash
+# Build the Docker image
+docker build -t multi-linter -f action/Dockerfile .
+
+# Run against your current project
+docker run -v $(pwd):/app -w /app multi-linter
+```
+
+## Configuration
+
+Create a `config/linter-config.yaml` file:
+
 ```yaml
-repos:
-  - repo: local
-    hooks:
-      - id: multi-linter
-        name: Run Multi-Linter
-        entry: docker run -v $(pwd):/app -w /app multi-linter
-        language: system
-        types: [python, javascript, go, rust, yaml]
+version: 1.0
+fail_on_error: true
+report_format: github
+
+linters:
+  eslint:
+    enabled: true
+    paths: ["src/**/*.ts", "src/**/*.js"]
+    auto_fix: true
+  prettier:
+    enabled: true
+    paths: ["src/**/*.ts", "src/**/*.js"]
+    auto_fix: true
+  flake8:
+    enabled: true
+    paths: ["**/*.py"]
+    max_line_length: 120
+  black:
+    enabled: true
+    paths: ["**/*.py"]
+    auto_fix: true
+  # ... more linters
 ```
-*Runs Multi-Linter automatically before every commit, preventing bad code from being pushed.*
 
-### 4. Advanced Reporting
-*   **GitHub annotations**: Errors and warnings appear inline on PR files.
-*   **JSON output**: For dashboards or CI logging.
-*   **JUnit XML**: Integrates with CI tools like Jenkins or GitLab.
+## Action Inputs
 
-## 🎨 Premium UX
-*   **Colorized output**: Blue for info, Green for start, Red/Yellow for failures/warnings.
-*   **Smart logging**: Unified format across all linters (`file:line:SEVERITY: message`).
-*   **Fail policies**: `fail_on_error` and `fail_on_warning` for granular CI control.
-*   **Optimized Docker build**: Includes all dependencies (Node.js, Python, Go, Rust, yq) preinstalled.
+| Input | Description | Default |
+|-------|-------------|---------|
+| `config_file` | Path to linter config | `config/linter-config.yaml` |
+| `fail_on_error` | Exit on errors | `true` |
+| `report_format` | Output format | `github` |
 
-## 🛠️ Extensibility
-*   Add new linters via DSL without modifying scripts.
-*   Customize paths, configs, and auto-fix per linter.
-*   Supports per-linter environment variables.
+## Publishing to GitHub Marketplace
 
-## 📈 Next Steps / Pro Enhancements
-*   Incremental linting for large repos (cache previous results).
-*   Version pinning per linter for reproducible builds.
-*   Advanced Markdown summary for PR comments.
-*   Multi-stage Docker build to reduce image size.
+1. Create a release with a semantic version tag (e.g., `v1.0.0`)
+2. The `publish.yml` workflow will build and push the Docker image
+3. Submit to GitHub Marketplace from your repository settings
 
----
-This project provides a fully professional, CI/CD-ready presentation with usage examples, DSL config, pre-commit hooks, reporting, and workflow integration.
+## License
+
+MIT

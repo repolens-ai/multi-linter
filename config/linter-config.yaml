@@ -1,19 +1,55 @@
 version: 1.0
 fail_on_error: true
-report_format: github  # github | json | junit | markdown
+report_format: github
 
 linters:
+  # JavaScript/TypeScript
   eslint:
     enabled: true
-    paths: ["src/**/*.ts", "src/**/*.js"]
+    paths: ["**/*.js", "**/*.ts", "linters/**/*.js", "scripts/**/*.js"]
     auto_fix: true
     config_file: ".eslintrc.json"
     fail_on_warning: false
   prettier:
     enabled: true
-    paths: ["src/**/*.ts", "src/**/*.js"]
+    paths: ["**/*.js", "**/*.ts", "**/*.css", "**/*.scss", "linters/**/*.js", "scripts/**/*.js"]
     auto_fix: true
     fail_on_warning: false
+  stylelint:
+    enabled: true
+    paths: ["**/*.css", "**/*.scss", "**/*.less"]
+    auto_fix: true
+    config_file: ".stylelintrc.json"
+    fail_on_warning: false
+  markdownlint:
+    enabled: true
+    paths: ["**/*.md"]
+    config_file: ".markdownlint.yaml"
+    fail_on_warning: false
+  tsc:
+    enabled: false
+    paths: ["**/*.ts", "**/*.tsx"]
+    fail_on_warning: false
+  biome:
+    enabled: false
+    paths: ["**/*"]
+    auto_fix: true
+    fail_on_warning: false
+
+  # JSON
+  jsonlint:
+    enabled: true
+    paths: ["**/*.json"]
+    fail_on_warning: false
+
+  # HTML
+  htmlhint:
+    enabled: true
+    paths: ["**/*.html"]
+    config_file: ".htmlhintrc"
+    fail_on_warning: false
+
+  # Python
   flake8:
     enabled: true
     paths: ["**/*.py"]
@@ -28,17 +64,187 @@ linters:
     enabled: true
     paths: ["**/*.py"]
     fail_on_warning: false
+  pylint:
+    enabled: true
+    paths: ["**/*.py"]
+    fail_on_warning: false
+  isort:
+    enabled: true
+    paths: ["**/*.py"]
+    auto_fix: true
+    fail_on_warning: false
+  bandit:
+    enabled: true
+    paths: ["**/*.py"]
+    fail_on_warning: false
+  ruff:
+    enabled: true
+    paths: ["**/*.py"]
+    auto_fix: true
+    fail_on_warning: false
+
+  # Go
   golangci-lint:
     enabled: true
     paths: ["./..."]
     config_file: ".golangci.yml"
     fail_on_warning: false
+  gofmt:
+    enabled: true
+    paths: ["**/*.go"]
+    auto_fix: true
+    fail_on_warning: false
+  govet:
+    enabled: true
+    paths: ["**/*.go"]
+    fail_on_warning: false
+
+  # Rust
   clippy:
     enabled: true
     paths: ["."]
     fail_on_warning: false
+  rustfmt:
+    enabled: true
+    paths: ["**/*.rs"]
+    auto_fix: true
+    fail_on_warning: false
+
+  # YAML
   yamllint:
     enabled: true
     paths: ["**/*.yml", "**/*.yaml"]
     config_file: ".yamllint.yaml"
+    fail_on_warning: false
+
+  # GitHub Actions Linter Config
+  github-linter:
+    enabled: true
+    paths: [".github/linters/*.yml"]
+    config_file: ".yamllint.yaml"
+    fail_on_warning: false
+
+  # Shell
+  shellcheck:
+    enabled: true
+    paths: ["**/*.sh"]
+    config_file: ".shellcheckrc"
+    fail_on_warning: false
+  shfmt:
+    enabled: true
+    paths: ["**/*.sh"]
+    auto_fix: true
+    fail_on_warning: false
+
+  # Docker
+  hadolint:
+    enabled: true
+    paths: ["**/Dockerfile*"]
+    config_file: ".hadolint.yaml"
+    fail_on_warning: false
+
+  # Java
+  checkstyle:
+    enabled: true
+    paths: ["**/*.java"]
+    config_file: "checkstyle.xml"
+    fail_on_warning: false
+
+  # Kotlin
+  ktlint:
+    enabled: true
+    paths: ["**/*.kt"]
+    auto_fix: true
+    fail_on_warning: false
+
+  # Terraform
+  terraform:
+    enabled: true
+    paths: ["**/*.tf"]
+    fail_on_warning: false
+  tflint:
+    enabled: true
+    paths: ["**/*.tf"]
+    config_file: ".tflint.hcl"
+    fail_on_warning: false
+
+  # CloudFormation
+  cfn-lint:
+    enabled: true
+    paths: ["**/cloudformation/**/*.yaml", "**/cloudformation/**/*.yml"]
+    fail_on_warning: false
+
+  # Kubernetes
+  kubeconform:
+    enabled: true
+    paths: ["**/*.yaml"]
+    fail_on_warning: false
+
+  # Ansible
+  ansible-lint:
+    enabled: true
+    paths: ["**/*.yml", "**/*.yaml"]
+    config_file: ".ansible-lint.yml"
+    fail_on_warning: false
+
+  # GitHub Actions
+  actionlint:
+    enabled: true
+    paths: [".github/workflows/**/*.yml", ".github/workflows/**/*.yaml"]
+    config_file: ".actionlint.yaml"
+    fail_on_warning: false
+
+  # Ruby
+  rubocop:
+    enabled: true
+    paths: ["**/*.rb"]
+    auto_fix: true
+    fail_on_warning: false
+
+  # Lua
+  luacheck:
+    enabled: true
+    paths: ["**/*.lua"]
+    fail_on_warning: false
+
+  # LaTeX
+  chktex:
+    enabled: true
+    paths: ["**/*.tex"]
+    fail_on_warning: false
+
+  # SQL
+  sqlfluff:
+    enabled: true
+    paths: ["**/*.sql"]
+    fail_on_warning: false
+
+  # .env files
+  dotenv-linter:
+    enabled: true
+    paths: ["**/.env*"]
+    fail_on_warning: false
+
+  # Secrets detection
+  gitleaks:
+    enabled: true
+    paths: ["."]
+    fail_on_warning: false
+
+  # Spell check
+  codespell:
+    enabled: true
+    paths: ["**/*.md", "**/*.txt"]
+    fail_on_warning: false
+
+  # XML
+  xmllint:
+    enabled: true
+    paths: ["**/*.xml"]
+    fail_on_warning: false
+
+  # Protocol Buffers
+  protolint:
+    enabled: true
+    paths: ["**/*.proto"]
     fail_on_warning: false

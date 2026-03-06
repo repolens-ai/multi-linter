@@ -1,0 +1,54 @@
+name: "Auto Label"
+
+on:
+  issues:
+    types: [opened, edited]
+  pull_request:
+    types: [opened, synchronize]
+  label_workflow:
+
+jobs:
+  label-issues:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues'
+    steps:
+      - name: Label bug issues
+        if: contains(github.event.issue.title, 'Bug') || contains(github.event.issue.title, 'bug') || contains(github.event.issue.body, 'bug')
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          labels: "type: bug"
+
+      - name: Label enhancement issues
+        if: contains(github.event.issue.title, 'Feature') || contains(github.event.issue.title, 'feature') || contains(github.event.issue.title, 'Enhancement')
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          labels: "type: enhancement"
+
+      - name: Label documentation issues
+        if: contains(github.event.issue.title, 'Doc') || contains(github.event.issue.title, 'docs')
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          labels: "type: documentation"
+
+  label-prs:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Label PRs based on files
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+
+      - name: Add size labels
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}

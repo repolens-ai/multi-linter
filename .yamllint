@@ -1,0 +1,6 @@
+.github/workflows/*.yml
+.github/labels.yml
+.github/labeler.yml
+.github/ISSUE_TEMPLATE/*.md
+config/*.yaml
+tests/fixtures/yaml/*.yml

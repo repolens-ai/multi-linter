@@ -1,0 +1,14 @@
+# Ignore files that aren't needed for the build
+.git
+.gitignore
+*.md
+tests/
+.github/
+LICENSE
+.env
+*.log
+*.tmp
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc

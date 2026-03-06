@@ -1,0 +1,67 @@
+# GitHub Labels Configuration
+# Add these labels to your repository settings manually or use actions/labeler
+
+labels:
+  - name: "type: bug"
+    color: "d73a4a"
+    description: "Something isn't working"
+
+  - name: "type: enhancement"
+    color: "a2eeef"
+    description: "New feature or request"
+
+  - name: "type: documentation"
+    color: "0075ca"
+    description: "Documentation only changes"
+
+  - name: "type: question"
+    color: "d876e3"
+    description: "Further information is requested"
+
+  - name: "area: testing"
+    color: "5319e7"
+    description: "Related to testing"
+
+  - name: "area: ci-cd"
+    color: "009800"
+    description: "Related to CI/CD"
+
+  - name: "area: docker"
+    color: "0e8a16"
+    description: "Related to Docker"
+
+  - name: "area: linters"
+    color: "1d76db"
+    description: "Related to linter scripts"
+
+  - name: "area: security"
+    color: "ff7619"
+    description: "Security related"
+
+  - name: "area: performance"
+    color: "e4e669"
+    description: "Performance related"
+
+  - name: "priority: high"
+    color: "b60205"
+    description: "High priority"
+
+  - name: "priority: medium"
+    color: "d93f0b"
+    description: "Medium priority"
+
+  - name: "priority: low"
+    color: "0e8a16"
+    description: "Low priority"
+
+  - name: "status: in progress"
+    color: "f9d0c4"
+    description: "Work in progress"
+
+  - name: "status: review needed"
+    color: "fbca04"
+    description: "Needs review"
+
+  - name: "status: approved"
+    color: "0075ca"
+    description: "Approved and ready"

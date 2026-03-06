@@ -10,9 +10,11 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Run Multi-Linter
-        uses: docker://repolens-ai/multi-linter:latest
+        uses: ./
         with:
-          config_file: .github/linter-config.yaml
+          config_file: config/linter-config.yaml
+          fail_on_error: true
+          report_format: github

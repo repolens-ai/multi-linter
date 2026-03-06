@@ -1,0 +1,19 @@
+# PR Labeler Configuration
+# Auto-label PRs based on changed files
+
+linters:
+  - linters/**/*
+
+ci:
+  - .github/workflows/*
+
+docker:
+  - action/Dockerfile
+  - docker/**/*
+
+documentation:
+  - "*.md"
+  - docs/**/*
+
+tests:
+  - tests/**/*
