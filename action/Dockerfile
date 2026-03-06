@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Stage 2: Python tools (pinned versions)
 FROM base AS python-deps
 
-RUN pip install --no-cache-dir --user \
+RUN pip install --no-cache-dir --break-system-packages \
     flake8==7.1.1 \
     black==24.8.0 \
     mypy==1.11.2 \
@@ -77,13 +77,12 @@ RUN gem install --no-document rubocop==1.65.1
 # Stage 6: Final image
 FROM base AS final
 
-COPY --from=python-deps /root/.local/ /root/.local/
+COPY --from=python-deps /usr/local/bin/ /usr/local/bin/
+COPY --from=python-deps /usr/local/lib/ /usr/local/lib/
 COPY --from=node-deps /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node-deps /usr/local/bin/ /usr/local/bin/
 COPY --from=go-deps /root/go/bin/ /root/go/bin/
 COPY --from=ruby-deps /usr/local/bundle/ /usr/local/bundle/
-
-ENV PATH="/root/.local/bin:${PATH}"
 
 RUN wget -q https://github.com/mikefarah/yq/releases/download/v4.35.2/yq_linux_amd64 -O /usr/local/bin/yq && \
     chmod +x /usr/local/bin/yq && \
