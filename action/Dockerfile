@@ -7,24 +7,23 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git=1:2.43.0-1ubuntu7 \
-    curl=8.5.0-2ubuntu10 \
-    wget=1.21.4-1ubuntu2 \
-    python3=3.12.3-0ubuntu2 \
-    python3-pip=24.0+dfsg-1ubuntu1 \
-    nodejs=18.19.0+dfsg-5ubuntu1 \
-    npm=10.2.4+dfsg-1ubuntu1 \
-    golang=2:1.22~ubuntu2 \
-    rustc=1.77.0+dfsg-1ubuntu1 \
-    cargo=1.77.0+dfsg-1ubuntu1 \
-    jq=1.7.1-1 \
-    shellcheck=0.10.0-1 \
-    hadolint=2.12.0+dfsg1-1 \
-    default-jdk=2:11-2build1 \
-    ruby=1:3.2.4 \
-    ruby-dev=1:3.2.4 \
-    libxml2-dev=2.9.14+dfsg-1.2ubuntu3 \
-    libffi-dev=3.4.4-1 \
+    git \
+    curl \
+    wget \
+    python3 \
+    python3-pip \
+    nodejs \
+    npm \
+    golang \
+    rustc \
+    cargo \
+    jq \
+    shellcheck \
+    default-jdk \
+    ruby \
+    ruby-dev \
+    libxml2-dev \
+    libffi-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
