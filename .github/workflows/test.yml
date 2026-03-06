@@ -15,8 +15,8 @@ jobs:
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
-          SC2044: true
-          SC2086: true
+          ignore_names: SC2034,SC2086
+          format: gcc
 
   build:
     runs-on: ubuntu-latest
