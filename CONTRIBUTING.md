@@ -5,7 +5,7 @@ Thank you for your interest in contributing to Multi-Linter!
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/repolense/multi-linter.git`
+2. Clone your fork: `git clone https://github.com/repolens-ai/multi-linter.git`
 3. Create a feature branch: `git checkout -b feature/my-feature`
 
 ## Development Setup
