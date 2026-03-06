@@ -1,0 +1,47 @@
+version: 1.0
+fail_on_error: true
+report_format: github
+
+linters:
+  # Shell scripts (scripts/ and linters/)
+  shellcheck:
+    enabled: true
+    paths: ["scripts/**/*.sh", "linters/**/*.sh"]
+    config_file: ".shellcheckrc"
+    fail_on_warning: false
+  shfmt:
+    enabled: true
+    paths: ["scripts/**/*.sh", "linters/**/*.sh"]
+    auto_fix: true
+    fail_on_warning: false
+
+  # YAML (GitHub workflows and config)
+  yamllint:
+    enabled: true
+    paths: [".github/workflows/*.yml", "config/*.yaml", ".github/labels.yml", ".github/labeler.yml"]
+    config_file: ".yamllint.yaml"
+    fail_on_warning: false
+  actionlint:
+    enabled: true
+    paths: [".github/workflows/*.yml", ".github/workflows/*.yaml"]
+    fail_on_warning: false
+
+  # Markdown (docs)
+  markdownlint:
+    enabled: true
+    paths: ["*.md", "docs/**/*.md", ".github/**/*.md"]
+    config_file: ".markdownlint.yaml"
+    fail_on_warning: false
+
+  # Python (test fixtures)
+  flake8:
+    enabled: true
+    paths: ["tests/**/*.py", "tests/fixtures/**/*.py"]
+    max_line_length: 120
+    fail_on_warning: false
+
+  # Docker (Dockerfile)
+  hadolint:
+    enabled: true
+    paths: ["Dockerfile", "docker/Dockerfile", "action/Dockerfile"]
+    fail_on_warning: false
