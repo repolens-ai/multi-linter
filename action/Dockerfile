@@ -67,7 +67,8 @@ RUN npm install -g --no-cache-dir \
 FROM base AS go-deps
 
 RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0 && \
-    go install github.com/bufbuild/buf/cmd/buf@v1.28.1
+    go install github.com/bufbuild/buf/cmd/buf@v1.28.1 && \
+    go install mvdan.cc/sh/v3/cmd/shfmt@v3.8.0
 
 # Stage 5: Ruby tools
 FROM base AS ruby-deps
