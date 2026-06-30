@@ -1,0 +1,9 @@
+name: example
+description: Example plugin demonstrating the multi-linter plugin architecture
+version: 1.0.0
+language: generic
+enabled: true
+paths:
+  - "**/*.example"
+script: linter.sh
+args: []

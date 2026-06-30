@@ -2,10 +2,16 @@ FROM ubuntu:24.04
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    git curl wget python3 python3-pip nodejs npm golang rustc cargo jq \
+    git curl wget python3 python3-pip nodejs npm rustc cargo jq \
     shellcheck hadolint default-jdk ruby ruby-dev \
-    libxml2-dev libcurl4-openssl-dev libffi-dev \
+    libxml2-dev libcurl4-openssl-dev libffi-dev build-essential \
     && apt-get clean
+
+RUN wget -q https://go.dev/dl/go1.23.0.linux-amd64.tar.gz -O /tmp/go.tar.gz && \
+    rm -rf /usr/local/go && \
+    tar -C /usr/local -xzf /tmp/go.tar.gz && \
+    rm /tmp/go.tar.gz
+ENV PATH="/usr/local/go/bin:${PATH}"
 
 # Install Python linters
 RUN pip install flake8 black mypy yamllint pylint isort bandit ruff \
@@ -13,7 +19,7 @@ RUN pip install flake8 black mypy yamllint pylint isort bandit ruff \
 
 # Install Node.js linters
 RUN npm install -g eslint prettier stylelint markdownlint-cli typescript \
-    @eslint/json @htmlhint/htmlhint commitlint actionlint \
+    @eslint/json htmlhint commitlint actionlint \
     eslint-plugin-jsonc markdownlint-cli
 
 # Install yq
@@ -68,5 +74,10 @@ COPY scripts/ /usr/local/bin/
 COPY linters/ /usr/local/bin/
 COPY config/ /tmp/config/
 RUN chmod +x /usr/local/bin/*.sh
+
+# Plugin support
+RUN mkdir -p /usr/local/bin/plugins
+COPY plugins/ /usr/local/bin/plugins/
+RUN find /usr/local/bin/plugins -name "*.sh" -exec chmod +x {} \;
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

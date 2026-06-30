@@ -248,3 +248,197 @@ linters:
     enabled: true
     paths: ["**/*.proto"]
     fail_on_warning: false
+
+  # Commit messages
+  commitlint:
+    enabled: false
+    paths: [".git/COMMIT_EDITMSG"]
+    fail_on_warning: false
+
+  # EditorConfig
+  editorconfig-checker:
+    enabled: false
+    paths: ["**/.editorconfig"]
+    fail_on_warning: false
+
+  # GoReleaser
+  goreleaser:
+    enabled: false
+    paths: [".goreleaser.yaml", ".goreleaser.yml"]
+    fail_on_warning: false
+
+  # OpenAPI (Spectral)
+  spectral:
+    enabled: false
+    paths: ["**/*.yaml", "**/*.yml", "**/*.json"]
+    fail_on_warning: false
+
+  # Natural language
+  textlint:
+    enabled: false
+    paths: ["**/*.md", "**/*.txt"]
+    fail_on_warning: false
+
+  # IaC security (Checkov)
+  checkov:
+    enabled: false
+    paths: ["."]
+    frameworks: "all"
+    fail_on_warning: false
+
+  # Vulnerability scanner (Trivy)
+  trivy:
+    enabled: false
+    paths: ["."]
+    scan_type: "config"
+    fail_on_warning: false
+
+  # Copy/paste detection
+  jscpd:
+    enabled: false
+    paths: ["."]
+    threshold: 50
+    fail_on_warning: false
+
+  # C/C++
+  cpplint:
+    enabled: false
+    paths: ["**/*.c", "**/*.cpp", "**/*.h", "**/*.hpp"]
+    filters: "-whitespace/indent"
+    fail_on_warning: false
+  clang-format:
+    enabled: false
+    paths: ["**/*.c", "**/*.cpp", "**/*.h", "**/*.hpp"]
+    fail_on_warning: false
+
+  # Terragrunt
+  terragrunt:
+    enabled: false
+    paths: ["."]
+    fail_on_warning: false
+
+  # Renovate
+  renovate-config-validator:
+    enabled: false
+    paths: ["renovate.json", "renovate.json5"]
+    fail_on_warning: false
+
+  # PHP
+  php-lint:
+    enabled: false
+    paths: ["**/*.php"]
+    fail_on_warning: false
+  phpcs:
+    enabled: false
+    paths: ["**/*.php"]
+    standard: "PSR12"
+    fail_on_warning: false
+  phpstan:
+    enabled: false
+    paths: ["."]
+    level: 6
+    fail_on_warning: false
+  psalm:
+    enabled: false
+    paths: ["."]
+    fail_on_warning: false
+
+  # Perl
+  perlcritic:
+    enabled: false
+    paths: ["**/*.pl", "**/*.pm"]
+    fail_on_warning: false
+
+  # R
+  lintr:
+    enabled: false
+    paths: ["**/*.R", "**/*.r"]
+    fail_on_warning: false
+
+  # Scala
+  scalafmt:
+    enabled: false
+    paths: ["**/*.scala"]
+    fail_on_warning: false
+
+  # .NET / C#
+  dotnet-format:
+    enabled: false
+    paths: ["**/*.cs", "**/*.sln"]
+    fail_on_warning: false
+
+  # Dart
+  dart-analyze:
+    enabled: false
+    paths: ["."]
+    fail_on_warning: false
+
+  # Clojure
+  clj-kondo:
+    enabled: false
+    paths: ["**/*.clj", "**/*.cljs", "**/*.cljc"]
+    fail_on_warning: false
+
+  # CoffeeScript
+  coffeelint:
+    enabled: false
+    paths: ["**/*.coffee"]
+    fail_on_warning: false
+
+  # GitHub Actions security
+  zizmor:
+    enabled: false
+    paths: [".github/workflows/*.yml"]
+    fail_on_warning: false
+
+  # Groovy
+  npm-groovy-lint:
+    enabled: false
+    paths: ["**/*.groovy"]
+    fail_on_warning: false
+
+  # Java formatter
+  google-java-format:
+    enabled: false
+    paths: ["**/*.java"]
+    fail_on_warning: false
+
+  # PowerShell
+  psscriptanalyzer:
+    enabled: false
+    paths: ["**/*.ps1", "**/*.psm1"]
+    fail_on_warning: false
+
+  # Snakemake
+  snakemake-lint:
+    enabled: false
+    paths: ["**/Snakefile", "**/*.smk"]
+    fail_on_warning: false
+  snakefmt:
+    enabled: false
+    paths: ["**/Snakefile", "**/*.smk"]
+    fail_on_warning: false
+
+  # Git conflict markers
+  conflict-marker:
+    enabled: true
+    paths: ["."]
+    fail_on_warning: false
+
+  # Amazon States Language
+  asl-validator:
+    enabled: false
+    paths: ["**/*.asl.json"]
+    fail_on_warning: false
+
+  # ARM Templates
+  arm-ttk:
+    enabled: false
+    paths: ["**/*.json"]
+    fail_on_warning: false
+
+  # Pre-commit
+  pre-commit:
+    enabled: false
+    paths: [".pre-commit-config.yaml"]
+    fail_on_warning: false

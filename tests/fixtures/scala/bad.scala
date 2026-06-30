@@ -1,0 +1,5 @@
+object Bad {
+  def  add(x:Int,y:Int)={
+    x+y
+  }
+}

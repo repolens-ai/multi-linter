@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/repolens-ai/multi-linter/config/linter-config.schema.json",
+  "title": "Multi-Linter Configuration",
+  "description": "Schema for validating multi-linter configuration files",
+  "type": "object",
+  "properties": {
+    "version": {
+      "description": "Configuration schema version",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "fail_on_error": {
+      "description": "Exit with non-zero code if any linter reports errors",
+      "type": "boolean",
+      "default": true
+    },
+    "report_format": {
+      "description": "Output format for linting results",
+      "type": "string",
+      "enum": ["github", "json", "junit", "text", "yaml", "markdown"],
+      "default": "github"
+    },
+    "linters": {
+      "description": "Map of linter names to their configurations",
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-zA-Z0-9_-]+$": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "description": "Whether this linter is enabled",
+              "type": "boolean",
+              "default": false
+            },
+            "paths": {
+              "description": "File patterns or paths to lint",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "auto_fix": {
+              "description": "Automatically fix issues when possible",
+              "type": "boolean",
+              "default": false
+            },
+            "config_file": {
+              "description": "Path to the linter's configuration file",
+              "type": "string"
+            },
+            "fail_on_warning": {
+              "description": "Fail if this linter produces warnings",
+              "type": "boolean",
+              "default": false
+            },
+            "max_line_length": {
+              "description": "Maximum line length (for linters that support it)",
+              "type": "integer",
+              "minimum": 40,
+              "maximum": 200
+            },
+            "severity": {
+              "description": "Severity level for this linter's issues",
+              "type": "string",
+              "enum": ["low", "medium", "high", "critical"],
+              "default": "medium"
+            },
+            "timeout": {
+              "description": "Timeout in seconds for this specific linter",
+              "type": "integer",
+              "minimum": 10,
+              "maximum": 3600
+            }
+          },
+          "required": ["enabled", "paths"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["version", "fail_on_error", "report_format", "linters"],
+  "additionalProperties": false
+}

@@ -33,11 +33,19 @@ test_linter_script() {
         return 1
     fi
     
-    # Check script has CONFIG_FILE variable
-    if ! grep -q "CONFIG_FILE=" "$script"; then
-        echo "FAIL: Missing CONFIG_FILE variable: $script"
-        return 1
-    fi
+    # Check script has CONFIG_FILE variable (skip library scripts)
+    local basename=$(basename "$script")
+    case "$basename" in
+        logging.sh|metrics.sh|detect-files.sh|plugin-loader.sh|config-loader.sh)
+            # Library script, may not use CONFIG_FILE directly
+            ;;
+        *)
+            if ! grep -q "CONFIG_FILE=" "$script"; then
+                echo "FAIL: Missing CONFIG_FILE variable: $script"
+                return 1
+            fi
+            ;;
+    esac
     
     # Check for proper error handling
     if ! grep -qE "^set -[euo]|^set -[eu]|^set -[eo]|^set -[e]" "$script"; then

@@ -1,0 +1,7 @@
+rule all:
+    input: "output.txt"
+
+rule bad:
+    input: "input.txt"
+output: "output.txt"
+    shell: "cp {input} {output}"
