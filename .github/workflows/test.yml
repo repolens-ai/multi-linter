@@ -37,7 +37,8 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./action
+          context: .
+          file: action/Dockerfile
           load: true
           tags: multi-linter:test
           cache-from: type=gha
@@ -146,3 +147,17 @@ jobs:
       - name: Run linter script unit tests
         run: |
           bash tests/integration/test-scripts.sh
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq bc
+          pip install yq 2>/dev/null || true
+
+      - name: Run unit tests
+        run: |
+          bash tests/run-all.sh

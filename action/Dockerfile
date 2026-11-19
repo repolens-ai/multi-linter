@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     nodejs \
     npm \
-    golang \
     rustc \
     cargo \
     jq \
@@ -24,8 +23,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ruby-dev \
     libxml2-dev \
     libffi-dev \
+    build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN wget -q https://go.dev/dl/go1.23.0.linux-amd64.tar.gz -O /tmp/go.tar.gz && \
+    rm -rf /usr/local/go && \
+    tar -C /usr/local -xzf /tmp/go.tar.gz && \
+    rm /tmp/go.tar.gz
+ENV PATH="/usr/local/go/bin:${PATH}"
 
 # Stage 2: Python tools (pinned versions)
 FROM base AS python-deps
@@ -52,19 +58,14 @@ RUN npm install -g --no-cache-dir \
     stylelint \
     markdownlint-cli2 \
     typescript \
-    @htmlhint/htmlhint
+    htmlhint
 
 # Stage 4: Build Go tools
 FROM base AS go-deps
 
 RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
-# Stage 5: Ruby tools
-FROM base AS ruby-deps
-
-RUN gem install --no-document rubocop
-
-# Stage 6: Final image
+# Stage 5: Final image
 FROM base AS final
 
 COPY --from=python-deps /usr/local/bin/ /usr/local/bin/
@@ -72,7 +73,8 @@ COPY --from=python-deps /usr/local/lib/ /usr/local/lib/
 COPY --from=node-deps /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node-deps /usr/local/bin/ /usr/local/bin/
 COPY --from=go-deps /root/go/bin/ /root/go/bin/
-COPY --from=ruby-deps /usr/local/bundle/ /usr/local/bundle/
+
+RUN gem install --no-document rubocop
 
 RUN wget -q https://github.com/mikefarah/yq/releases/download/v4.35.2/yq_linux_amd64 -O /usr/local/bin/yq && \
     chmod +x /usr/local/bin/yq
@@ -86,6 +88,11 @@ COPY scripts/ /usr/local/bin/
 COPY linters/ /usr/local/bin/
 COPY config/ /tmp/config/
 RUN chmod +x /usr/local/bin/*.sh
+
+# Plugin support
+RUN mkdir -p /usr/local/bin/plugins
+COPY plugins/ /usr/local/bin/plugins/
+RUN find /usr/local/bin/plugins -name "*.sh" -exec chmod +x {} \;
 
 USER linter
 WORKDIR /app

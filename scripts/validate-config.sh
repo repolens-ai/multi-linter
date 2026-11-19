@@ -1,88 +1,98 @@
 #!/bin/bash
-# Config validation script
 
-set -e
+set -euo pipefail
 
 CONFIG_FILE=${1:-config/linter-config.yaml}
+SCHEMA_FILE=${SCHEMA_FILE:-config/linter-config.schema.json}
+HAS_ERRORS=0
 
-# Find yq
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/logging.sh
+source "$SCRIPT_DIR/logging.sh"
+
 if [ -x /tmp/yq ]; then
     YQ=/tmp/yq
 elif command -v yq &>/dev/null; then
     YQ=yq
 else
-    echo "Error: yq not found"
+    log_error "yq not found"
     exit 1
 fi
 
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: Config file not found: $CONFIG_FILE"
+    log_error "Config file not found: $CONFIG_FILE"
     exit 1
 fi
 
-echo "Validating config file: $CONFIG_FILE"
+log_info "Validating config file: $CONFIG_FILE"
 
-# Check required fields
-if ! $YQ e '.version' "$CONFIG_FILE" > /dev/null 2>&1; then
-    echo "Error: Missing required field 'version'"
-    exit 1
+$YQ e '.version' "$CONFIG_FILE" > /dev/null 2>&1 || { log_error "Missing required field 'version'"; HAS_ERRORS=1; }
+$YQ e '.fail_on_error' "$CONFIG_FILE" > /dev/null 2>&1 || { log_error "Missing required field 'fail_on_error'"; HAS_ERRORS=1; }
+$YQ e '.report_format' "$CONFIG_FILE" > /dev/null 2>&1 || { log_error "Missing required field 'report_format'"; HAS_ERRORS=1; }
+$YQ e '.linters' "$CONFIG_FILE" > /dev/null 2>&1 || { log_error "Missing required section 'linters'"; HAS_ERRORS=1; }
+
+FORMAT=$($YQ e '.report_format // ""' "$CONFIG_FILE")
+case "$FORMAT" in
+    github|json|text|yaml|junit|markdown) ;;
+    *)
+        log_error "Invalid report_format '$FORMAT'. Must be one of: github, json, text, yaml, junit, markdown"
+        HAS_ERRORS=1
+        ;;
+esac
+
+FAIL_ON_ERROR=$($YQ e '.fail_on_error // ""' "$CONFIG_FILE")
+if [ "$FAIL_ON_ERROR" != "true" ] && [ "$FAIL_ON_ERROR" != "false" ]; then
+    log_error "fail_on_error must be boolean (true/false)"
+    HAS_ERRORS=1
 fi
 
-if ! $YQ e '.fail_on_error' "$CONFIG_FILE" > /dev/null 2>&1; then
-    echo "Error: Missing required field 'fail_on_error'"
-    exit 1
+VERSION=$($YQ e '.version // ""' "$CONFIG_FILE")
+if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+$'; then
+    log_error "Invalid version format '$VERSION'. Must be like '1.0'"
+    HAS_ERRORS=1
 fi
 
-if ! $YQ e '.report_format' "$CONFIG_FILE" > /dev/null 2>&1; then
-    echo "Error: Missing required field 'report_format'"
-    exit 1
+LINTERS=$($YQ e '.linters | keys | .[]' "$CONFIG_FILE" 2>/dev/null || echo "")
+if [ -z "$LINTERS" ]; then
+    log_error "No linters defined in configuration"
+    HAS_ERRORS=1
 fi
 
-# Validate linters section
-if ! $YQ e '.linters' "$CONFIG_FILE" > /dev/null 2>&1; then
-    echo "Error: Missing required section 'linters'"
-    exit 1
-fi
+for linter in $LINTERS; do
+    HAS_ENABLED=$($YQ e ".linters.$linter | has(\"enabled\")" "$CONFIG_FILE" 2>/dev/null || echo "false")
+    if [ "$HAS_ENABLED" != "true" ]; then
+        log_error "Linter '$linter' missing 'enabled' field"
+        HAS_ERRORS=1
+        continue
+    fi
 
-# Check each linter has required fields
-LINTERS=$($YQ e '.linters | keys' "$CONFIG_FILE")
-for linter in $(echo "$LINTERS" | grep -v "^#" | grep -v "^$" | sed 's/^[[:space:]]*//'); do
-    if [ -n "$linter" ]; then
-        if ! $YQ e ".linters.$linter.enabled" "$CONFIG_FILE" > /dev/null 2>&1; then
-            echo "Error: Linter '$linter' missing 'enabled' field"
-            exit 1
-        fi
-        
-        if ! $YQ e ".linters.$linter.paths" "$CONFIG_FILE" > /dev/null 2>&1; then
-            echo "Error: Linter '$linter' missing 'paths' field"
-            exit 1
+    ENABLED=$($YQ e ".linters.$linter.enabled" "$CONFIG_FILE" 2>/dev/null || echo "false")
+
+    HAS_PATHS=$($YQ e ".linters.$linter | has(\"paths\")" "$CONFIG_FILE" 2>/dev/null || echo "false")
+    if [ "$HAS_PATHS" != "true" ]; then
+        log_error "Linter '$linter' missing 'paths' field"
+        HAS_ERRORS=1
+    fi
+
+    if [ "$ENABLED" = "true" ]; then
+        SCRIPT_PATH="/usr/local/bin/${linter}.sh"
+        if [ ! -f "$SCRIPT_PATH" ]; then
+            log_warn "No built-in script for linter '$linter' at $SCRIPT_PATH (may use plugin)"
         fi
     fi
 done
 
-# Validate report_format values
-FORMAT=$($YQ e '.report_format' "$CONFIG_FILE")
-case "$FORMAT" in
-    github|json|text|yaml)
-        ;;
-    *)
-        echo "Error: Invalid report_format '$FORMAT'. Must be one of: github, json, text, yaml"
-        exit 1
-        ;;
-esac
+if command -v check-jsonschema &>/dev/null && [ -f "$SCHEMA_FILE" ]; then
+    log_info "Validating against JSON schema: $SCHEMA_FILE"
+    $YQ e -j '.' "$CONFIG_FILE" | check-jsonschema --schemafile "$SCHEMA_FILE" - && log_info "Schema validation passed" || { log_error "Schema validation failed"; HAS_ERRORS=1; }
+else
+    log_debug "Schema validation skipped (install check-jsonschema for schema validation)"
+fi
 
-# Validate fail_on_error is boolean
-if ! $YQ e '.fail_on_error' "$CONFIG_FILE" | grep -qE 'true|false'; then
-    echo "Error: fail_on_error must be boolean"
+if [ $HAS_ERRORS -gt 0 ]; then
+    log_error "Config validation FAILED with $HAS_ERRORS error(s)"
     exit 1
 fi
 
-# Validate version format
-VERSION=$($YQ e '.version' "$CONFIG_FILE")
-if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+$'; then
-    echo "Error: Invalid version format '$VERSION'. Must be like '1.0'"
-    exit 1
-fi
-
-echo "Config validation passed!"
+log_info "Config validation passed!"
 exit 0

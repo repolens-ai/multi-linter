@@ -1,0 +1,11 @@
+{
+  "Comment": "Bad state machine",
+  "StartAt": "HelloWorld",
+  "States": {
+    "HelloWorld": {
+      "Type": "Pass",
+      "Result": "Hello",
+      "End": true
+    }
+  }
+}
